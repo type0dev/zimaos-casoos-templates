@@ -1,0 +1,83 @@
+name: serene_jaco
+services:
+  ytdl-mongo-db:
+    cpu_shares: 90
+    command: []
+    container_name: mongo-db
+    deploy:
+      resources:
+        limits:
+          memory: 14930M
+    image: mongo:4
+    labels:
+      icon: https://fontawesome.com/icons/youtube?f=classic&s=brands
+    logging:
+      driver: none
+    restart: always
+    volumes:
+      - type: bind
+        source: /media/SSD-Storage/AppData/YoutubeDL-Material/mongo/db/
+        target: /data/db
+    ports: []
+    devices: []
+    cap_add: []
+    environment: []
+    network_mode: bridge
+    privileged: false
+  ytdl_material:
+    cpu_shares: 90
+    command: []
+    depends_on:
+      ytdl-mongo-db:
+        condition: service_started
+        required: true
+    deploy:
+      resources:
+        limits:
+          memory: 14930M
+    environment:
+      - write_ytdl_config=true
+      - ytdl_mongodb_connection_string=mongodb://172.17.0.9:27017
+      - ytdl_use_local_db=false
+    image: tzahi12345/youtubedl-material:latest
+    labels:
+      icon: https://fontawesome.com/icons/youtube?f=classic&s=brands
+    ports:
+      - target: 17442
+        published: "8998"
+        protocol: tcp
+    restart: always
+    volumes:
+      - type: bind
+        source: /media/SSD-Storage/AppData/YoutubeDL-Material/appdata
+        target: /app/appdata
+      - type: bind
+        source: /media/SSD-Storage/AppData/YoutubeDL-Material/audio
+        target: /app/audio
+      - type: bind
+        source: /media/SSD-Storage/AppData/YoutubeDL-Material/video
+        target: /app/video
+      - type: bind
+        source: /media/SSD-Storage/AppData/YoutubeDL-Material/subscriptions
+        target: /app/subscriptions
+      - type: bind
+        source: /media/SSD-Storage/AppData/users
+        target: /app/users
+    devices: []
+    cap_add: []
+    network_mode: bridge
+    privileged: false
+    container_name: ""
+x-casaos:
+  author: self
+  category: self
+  hostname: ""
+  icon: https://fontawesome.com/icons/youtube?f=classic&s=brands
+  index: /
+  is_uncontrolled: false
+  port_map: "8998"
+  scheme: http
+  store_app_id: serene_jaco
+  title:
+    custom: YoutubeDL-Material
+    en_us: ytdl_material
