@@ -1,0 +1,51 @@
+name: gentle_zhuang
+services:
+  pocket-id:
+    cpu_shares: 90
+    command: []
+    deploy:
+      resources:
+        limits:
+          memory: 14930M
+    environment:
+      - MAXMIND_LICENSE_KEY=-
+      - PUBLIC_APP_URL=http://localhost
+      - TRUST_PROXY=yes
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost/health
+      timeout: 5s
+      interval: 1m30s
+      retries: 2
+      start_period: 10s
+    image: ghcr.io/pocket-id/pocket-id:latest
+    labels:
+      icon: https://pocket-id.org/img/logo.png
+    ports:
+      - target: 80
+        published: "3000"
+        protocol: tcp
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: /media/SSD-Storage/AppData/pocket-id/data
+        target: /app/backend/data
+    devices: []
+    cap_add: []
+    network_mode: bridge
+    privileged: false
+    container_name: ""
+x-casaos:
+  author: self
+  category: self
+  hostname: ""
+  icon: https://pocket-id.org/img/logo.png
+  index: /
+  is_uncontrolled: false
+  port_map: "3000"
+  scheme: http
+  store_app_id: gentle_zhuang
+  title:
+    custom: ""
+    en_us: pocket-id
